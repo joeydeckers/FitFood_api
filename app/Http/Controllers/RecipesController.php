@@ -127,11 +127,22 @@ class RecipesController extends Controller
 
         // validate schrijven
 
+
         $id = $request['id'];
         $recipe_owner_id = $request['recipe_owner_id'];
         $recipe = Recipe::find($id);
         if($recipe['recipe_owner_id'] == $recipe_owner_id){
+
+            if($request->file('recipe_image')){
+                $filename = $request->file('recipe_image')->getClientOriginalName();
+                $extension = File::extension($filename);
+                $newName = md5($filename.time());
+                $path = $request->file('recipe_image')->move(public_path("/upload"), $newName.".".$extension);
+                $imageUrl = "http://127.0.0.1:8000/upload/".$newName.".".$extension;
+            }
+
             $recipe->update($request->all());
+            $recipe->recipe_image = $imageUrl;
             return response()->json([
                 'Message' => 'Recipe changed!',
                 'Recipe' => $recipe
