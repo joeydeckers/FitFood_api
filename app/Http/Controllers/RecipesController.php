@@ -122,9 +122,26 @@ class RecipesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+
+        // validate schrijven
+
+        $id = $request['id'];
+        $recipe_owner_id = $request['recipe_owner_id'];
+        $recipe = Recipe::find($id);
+        if($recipe['recipe_owner_id'] == $recipe_owner_id){
+            $recipe->update($request->all());
+            return response()->json([
+                'Message' => 'Recipe changed!',
+                'Recipe' => $recipe
+            ], 200);
+        }else{
+            return response()->json([
+                'message' => "You don't have access to this recipe"
+            ], 400);
+        }
+       
     }
 
     /**
