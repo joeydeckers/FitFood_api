@@ -126,11 +126,27 @@ class RecipesController extends Controller
     {
 
         // validate schrijven
+        $rules = [
+            'recipe_name' =>  'regex:/^[a-zA-Z ]+$/',
+            'recipe_ingredients' => 'regex:/^[a-zA-Z ]+$/',
+            'recipe_category' => 'regex:/^[a-zA-Z ]+$/',
+            'recipe_description' => 'regex:/^[a-zA-Z ]+$/',
+            'recipe_image' => 'image|max:400000',
+            'recipe_owner_id' => 'required'
+        ];
+    
+        $validator = Validator::make($request->all(), $rules);
+    
+        if($validator->fails()){
+            return response()->json($validator->errors());
+        }
 
 
         $id = $request['id'];
         $recipe_owner_id = $request['recipe_owner_id'];
         $recipe = Recipe::find($id);
+        
+
         if($recipe['recipe_owner_id'] == $recipe_owner_id){
 
             if($request->file('recipe_image')){
@@ -139,20 +155,27 @@ class RecipesController extends Controller
                 $newName = md5($filename.time());
                 $path = $request->file('recipe_image')->move(public_path("/upload"), $newName.".".$extension);
                 $imageUrl = "http://127.0.0.1:8000/upload/".$newName.".".$extension;
+
+                $recipe->update($request->all());
+                $recipe->recipe_image = $imageUrl;
+            }else{
+                $recipe->update($request->all());
+                $recipe->recipe_image =  $recipe->recipe_image;
             }
 
-            $recipe->update($request->all());
-            $recipe->recipe_image = $imageUrl;
+           
             return response()->json([
                 'Message' => 'Recipe changed!',
                 'Recipe' => $recipe
             ], 200);
+           
         }else{
             return response()->json([
                 'message' => "You don't have access to this recipe"
             ], 400);
         }
        
+
     }
 
     /**

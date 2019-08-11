@@ -29,11 +29,11 @@ Route::get('/recipes/{id}', 'RecipesController@show');
 Route::post('/register', 'AuthController@register');
 Route::post('/login', 'AuthController@login');
 
-Route::post('/recipe/{recipeName}', 'recipesController@update');
 
 Route::group(['middleware' => 'auth:api'], function(){
     Route::post('/categories/create', 'CategoryController@store');
     Route::post('/recipes/create', 'RecipesController@store');
     Route::post('/recipes/delete/{id}', 'RecipesController@destroy');
+    Route::post('/recipe/{recipeName}', 'recipesController@update');
 });
 

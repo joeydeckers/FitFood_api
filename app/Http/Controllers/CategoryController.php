@@ -53,19 +53,8 @@ class CategoryController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function showCategoryItems($categoryName)
-    {
-
-        $category = Category::where('category_name', $categoryName)->get();
-
-        if(empty($category)){
-            return 'Category not fond';
-        }else{
-            $catName = $category[0]->category_name;
-
-            $recipes = Recipe::where('recpipe_category', $catName)->get();
-    
-            return $recipes;
-        }
+    {    
+        return Recipe::where('recipe_category', $categoryName)->get();
     }
 
     /**
