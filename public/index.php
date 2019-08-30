@@ -1,5 +1,5 @@
 <?php
-
+header('Access-Control-Allow-Origin: http://localhost:8080');
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
